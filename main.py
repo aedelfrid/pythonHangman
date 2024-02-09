@@ -17,28 +17,29 @@ words = [
 class word:
     def __init__(self):
         self.w = words[random.randint(0, len(words) - 1)]
-        self.currentWord = self.w
+        self.currentWord = list(self.w)
         self.guessedChars = []
+        print("a new word obj is instantiated")
 
     def __str__(self):
         return self.w
 
-    def breakDownWord(self) :
-        return list(self.w)
-
-    def hideWord(self) :
-        for i in self.currentWord:
-            if self.currentWord[i] != " ":
-                self.currentWord[i] = "_"
-
-    def revealLetter(self, user, guess) :
-        for i in self.w:
-            if self.w[i] == guess:
-                self.currentWord[i] = guess
+    def hideWord(self):
+        for iw, w in enumerate(self.currentWord):
+            if w != " ":
+                self.currentWord[iw] = "_"
+                    
+    def revealLetter(self, user, guess):
+        revealedLetters = 0
+        for idx, x in enumerate(self.w):
+            if x == guess:
+                self.currentWord[idx] = guess
+                revealedLetters += 1
                 user.score += 1
-            else:
-                self.guessedChars.append(guess)
-                user.lives -= 1
+        if revealedLetters == 0:
+            self.guessedChars.append(guess)
+            user.lives -= 1
+                
 
 
 class player:
@@ -47,35 +48,33 @@ class player:
         self.lives = 5
         self.score = 0
 
-def guessWord(chosenWord) :
+def guessWord(user, chosenWord) :
     print(f"HANGMAN\nGuess the Word!\n{chosenWord.currentWord}\nGuessed letters:\n{chosenWord.guessedChars}")
-    guess = input("Guess a letter.")
+    print(f"Guesses remaining: {user.lives}")
+    guess = input("Guess a letter.\n")
 
-    for i in chosenWord.guessedChars:
-        if guess == chosenWord.guessedChars[i]:
+    for char in chosenWord.guessedChars:
+        if guess == char:
             print(f"Already guessed {guess}, please try again.")
-            guessWord(chosenWord)
+            break
 
-    chosenWord.revealLetter(guess)
+    chosenWord.revealLetter(user, guess)
 
 def main() :
 
     user = player(input("Thanks for playing Hangman!\nPlease enter a name for our scoreboard!\n"))
     chosenWord = word()
 
-    chosenWord.breakDownWord()
-    # need to break down current word without breaking down chosen word?
     chosenWord.hideWord()
 
-    for i in range(26):
+    while chosenWord.currentWord != list(chosenWord.w):
         if user.lives == 0:
             print("You have run out of guesses.\nGAME OVER")
+            # scoreboard here?
             quit()
 
-        if chosenWord.currentWord ==
-        guessWord(chosenWord)
+        guessWord(user, chosenWord)
+    
+    print(f"Congrats! You won!\nScore:{user.score}")
 
-# main()
-
-
-
+main()
